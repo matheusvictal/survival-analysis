@@ -1,0 +1,123 @@
+---
+title: "Avaliação 1 - SME0821"
+author: "Matheus Victal Cerqueira"
+date: "30/05/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Introdução
+
+Abaixo apresenta-se uma solução para algumas das questões da avaliação 1 da disciplina Análise de SObrevivência e Confiabilidade (SME0821).
+
+## Questão 3
+
+Como o estimador K-M é um excelente estimador não paramétrico, principalmente para pequenas amostras, sendo um EMV, apresentando distribuição assintótica normal e sendo consistente sob certas condições, iremos estimar $S(3)$ e obter um intervalo de confiância para tal estimativa utilizando-se dele.
+
+```{r}
+defaultW <- getOption("warn") 
+
+options(warn = -1) 
+
+rm(list=ls(all=TRUE))
+
+# Bibliotecas
+library(survminer)
+library(survival)
+library(ggfortify)
+
+# Tempos de vida observados
+tempos <- c(1,2,2,2,3,3,4,5,6,7)
+# Indicador de falha (1: falha, 0 :censura)
+censuras <- c(1,1,1,0,1,0,1,0,1,0)
+
+
+# Ajuste por meio de um estimador de Kaplan-Meier
+fit1 <- survfit(Surv(tempos,censuras)~1)
+
+summary(fit1)
+
+```
+Pelos resultados, podemos concluir que:
+
+\begin{center}
+$\hat{S}(3) = 0,583$ e $IC[\hat{S}(3), \gamma = 95\%]= [0,3396;1,000]$
+\end{center}
+
+Utilizando-se do estimador de Nelson-Aalen:
+
+```{r}
+# Estimativa Nelson-Aalen
+fit <- survfit(coxph(Surv(tempos,censuras) ~ 1))
+
+summary(fit)
+```
+Percebe-se que a estimativa e o intervalo de confiânca são próximos pelos dois tipos de estimadores diferentes.
+
+## Questão 6
+
+```{r}
+h <- function(x){
+  return((2*exp(-2*x) + 4*exp(-4*x) - 6*exp(-6*x))/(exp(-2*x) + exp(-4*x) - exp(-6*x)))
+}
+
+p <- ggplot() + xlim(0,10)
+
+p +
+  geom_function(aes(colour = "h(t)"), fun = h, size = 1) +
+  xlab("t") +
+  ylab("h(t)") + 
+  
+  theme_grey(base_size = 20)
+```
+Assim sendo, $h(t)$ é unimodal.
+
+## Questão 8
+
+Justificativa: A menor função $H(t)$ para qualquer $t>0$ é a correspondente ao tratamento com quimioterapia e radioterapia. Assim sendo, sua função de sobrevivência irá decrescer mais devagar do que as outras em todos os pontos analisados de $t$, tendo-se em vista a seguinte relação:
+
+\begin{center}
+$S(t) = exp\{-H(t)\}$
+\end{center}
+
+Assim sendo, a área abaixo da curva de sobrevivência correspondente ao tratamento com qiuimioterapia e radioterapia será maior do que as outras, conferindo-a um maior valor de $E[T]$ (tempo médio de recediva).
+
+## Questão 9
+
+Resposta: Falso
+
+Justificativa: O teste Logrank se trata de um teste não paramétrico, pois não há nenhuma pressuposição sobre a distribuição probabil[istica dos dados de interesse na aplicação de tal teste.
+
+## Questão 10
+
+```{r}
+# Grupos
+k <- 4
+# Graus de liberdade
+graus <- k-1
+# p-valor
+pchisq(10.62, df = graus, lower.tail = F)
+```
+
+
+Obs.: dados da submissão 
+
+Submissão
+
+Avaliação de Meio Semestre - Informações sobre a Submissão
+
+Nome do Curso 	SME0821_Turma01_1Sem_2021_ET
+
+Criado por 	Vicente Garibay-Cancho
+
+Título da Avaliação 	Avaliação de Meio Semestre
+
+Número de Submissões Restantes 	0 out of 1
+
+Número de Confirmação 	70581-5764-47002b01-c3f2-40b2-87cf-cb8d03d46e88-Sun May 30 18:58:40 BRT 2021
+
+Submetido 	30/05/2021
